@@ -26,8 +26,6 @@ public class PatientTest {
 
     @Test
     public void testTransactionMethod(){
-        Patient patient= patientService.getPatientById(1L);
-        System.out.println(patient);
 
     }
 

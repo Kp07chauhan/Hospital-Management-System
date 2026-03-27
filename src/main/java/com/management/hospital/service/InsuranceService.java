@@ -12,31 +12,40 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 @Service
 @RequiredArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class InsuranceService {
 
-    private InsuranceRepository insuranceRepository;
-    private PatientRepository patientRepository;
+    private final InsuranceRepository insuranceRepository;
+    private final PatientRepository patientRepository;
 
     @Transactional
-    public Patient assignInsuranceToPatient(Insurance insurance,Long patientId){
-        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new EntityNotFoundException("Patient not found with id : "+patientId));
+    public Patient assignInsuranceToPatient(Insurance insurance, Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new EntityNotFoundException("Patient not found with id: " + patientId));
+
         patient.setInsurance(insurance);
-        insurance.setPatient(patient);
+        insurance.setPatient(patient); // bidirectional consistency maintainence
+
         return patient;
     }
 
     @Transactional
-    public Patient disassociateInsuranceFromPatient(Long patientId){
-        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new EntityNotFoundException("Patient not found with id : "+patientId));
+    public Patient disaccociateInsuranceFromPatient(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new EntityNotFoundException("Patient not found with id: " + patientId));
 
         patient.setInsurance(null);
-
         return patient;
     }
+
+    // HW
+    //Create three appointment for a patient and then delete Patient
+
 
 }
